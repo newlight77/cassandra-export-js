@@ -1,0 +1,22 @@
+{
+  "host" : "localhost",
+  "port" : 9042,
+  "keyspace" : "docker",
+  "user" : "",
+  "password" : "",
+  "tables" : [
+    {
+      "name" : "temp",
+      "maxSize" : "1000"
+    },
+    {
+      "name" : "lock"
+    },
+    {
+      "name" : "cron",
+      "maxSize" : "1000",
+      "exclude" : true
+    }
+  ],
+  "dataDir" : "./data"
+}

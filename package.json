@@ -1,0 +1,10 @@
+{
+  "name": "cassandra-export-js",
+  "version": "1.0.0",
+  "main": "index.js",
+  "dependencies": {
+    "JSONStream": "^1.3.1",
+    "cassandra-driver": "^3.2.0",
+    "chalk": "^2.3.0"
+  }
+}
