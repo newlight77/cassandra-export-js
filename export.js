@@ -1,36 +1,28 @@
 const cluster = require('cluster');
 const http = require('http');
 const numCPUs = require('os').cpus().length;
+
 const cassandraService = require('./cassandra-service');
+const exportService = require('./export-service');
+const util = require('./util');
 
 let config = require('./config.js');
 
-let shouldExport = function (table) {
-  let tables = Object.values(config.tables)
-  .filter(entry => (!entry.exclude == true) && entry.name == table);
-  return tables.length > 0;
-}
-
-let alives = function () {
-  let count = 0;
-  for (const id in cluster.workers) {
-    if (!cluster.workers[id].isDead()) {
-      console.log('woprker is alive', id);
-      count++;
-    }
-  }
-  return count;
-}
-
 function messageHandler(table) {
-  process.send('done');
+  exportService.exportSingleTable(table)
+  .then(function resolve() {
+    console.log('success exporting table :', table);
+    process.send('done');
+  }, function error() {
+    console.log('Error exporting table :', table);
+  });
 }
 
 if (cluster.isMaster) {
   console.log(`Master ${process.pid} is running`);
 
   setInterval(() => {
-    let nbAlives = alives();
+    let nbAlives = util.alives(cluster);
     console.log('nbAlives=', nbAlives);
     if (nbAlives == 0) {
       process.exit();
@@ -40,7 +32,7 @@ if (cluster.isMaster) {
   cassandraService.listTables()
   .then(function (tables){
       tables.forEach( table => {
-        if (shouldExport(table)) {
+        if (util.shouldProcessTable(table)) {
           cluster.fork().send(table);
         }
       });
@@ -71,6 +63,7 @@ if (cluster.isMaster) {
   });
 
   cluster.on('exit', (worker, code, signal) => {
+    exportService.gracefulShutdown();
     cassandraService.gracefulShutdown();
     console.log('Closing connection of systemClient');
     console.log(`worker ${worker.process.pid} died`);
