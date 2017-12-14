@@ -2,11 +2,10 @@ const cluster = require('cluster');
 const http = require('http');
 const numCPUs = require('os').cpus().length;
 
-const cassandraService = require('./cassandra-service');
-const exportService = require('./export-service');
-const util = require('./util');
-
-let config = require('./config.js');
+const cassandraService = require('./src/cassandra-service');
+const exportService = require('./src/export-service');
+const util = require('./src/util');
+let config = require('./src/config');
 
 function messageHandler(table) {
   exportService.exportSingleTable(table)

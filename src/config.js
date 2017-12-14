@@ -1,6 +1,6 @@
 'use strict';
 
-let config = require('./config.json');
+let config = require('../config.json');
 
 if (process.env.KEYSPACE) {
   config.keyspace = process.env.KEYSPACE;

@@ -2,7 +2,8 @@
 'use strict';
 
 const cassandra = require('cassandra-driver');
-let config = require('./config.js');
+
+let config = require('./config');
 
 let authProvider;
 

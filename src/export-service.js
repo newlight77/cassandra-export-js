@@ -6,8 +6,8 @@ const jsonStream = require('JSONStream');
 const cassandra = require('cassandra-driver');
 const color = require('chalk');
 
-let config = require('./config.js');
-let util = require('./util');
+const util = require('./util');
+let config = require('./config');
 
 let authProvider;
 

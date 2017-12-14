@@ -2,7 +2,7 @@
 
 const color = require('chalk');
 
-let config = require('./config.json');
+let config = require('./config');
 
 function isPlainObject(o) {
   return !!o
