@@ -41,6 +41,9 @@ function alives (cluster) {
 }
 
 function shouldProcessTable (table) {
+  if (!config.tables || config.tables == 0) {
+    return true;
+  }
   let tables = Object.values(config.tables)
   .filter(entry => (!entry.exclude == true) && entry.name == table);
   return tables.length > 0;
