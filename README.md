@@ -75,3 +75,7 @@ node import.js
 ```
 
 This will import from json files under dataDir;
+
+## Licence
+
+[Apache License 2.0](https://github.com/newlight77/cassandra-export-js/blob/master/LICENSE)
