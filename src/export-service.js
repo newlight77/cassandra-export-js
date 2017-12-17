@@ -3,28 +3,15 @@
 
 const fs = require('fs');
 const jsonStream = require('JSONStream');
-const cassandra = require('cassandra-driver');
 const color = require('chalk');
 
+const client = require('./cassandra-service').client;
 const util = require('./util');
 let config = require('./config');
-
-let authProvider;
-
-if (config.user && config.password) {
-    authProvider = new cassandra.auth.PlainTextAuthProvider(config.user, config.password);
-}
 
 if (!fs.existsSync(config.dataDir)){
     fs.mkdirSync(config.dataDir);
 }
-
-let client = new cassandra.Client({
-  contactPoints: [config.host],
-  keyspace: config.keyspace,
-  authProvider: authProvider,
-  protocolOptions: {port: [config.port]}
-});
 
 function createJsonFile (table) {
   let jsonFile = fs.createWriteStream(config.dataDir + '/' + table + '.json');
@@ -79,16 +66,4 @@ let exportSingleTable = function (table) {
       });
 }
 
-const gracefulShutdown = function() {
-  client.shutdown()
-      .then(function (){
-          process.exit();
-      })
-      .catch(function (err){
-          console.log(`error : ${color.red(err)}`);
-          process.exit(1);
-      });
-}
-
 module.exports.exportSingleTable = exportSingleTable;
-module.exports.gracefulShutdown = gracefulShutdown;

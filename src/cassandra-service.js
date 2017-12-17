@@ -11,6 +11,13 @@ if (config.user && config.password) {
     authProvider = new cassandra.auth.PlainTextAuthProvider(config.user, config.password);
 }
 
+let client = new cassandra.Client({
+  contactPoints: [config.host],
+  keyspace: config.keyspace,
+  authProvider: authProvider,
+  protocolOptions: {port: [config.port]}
+});
+
 let systemClient = new cassandra.Client({
     contactPoints: [config.host],
     authProvider: authProvider,
@@ -55,8 +62,19 @@ let gracefulShutdown = function() {
           console.log(err);
           process.exit(1);
       });
+
+  client.shutdown()
+      .then(function (){
+          process.exit();
+      })
+      .catch(function (err){
+          console.log(`error : ${color.red(err)}`);
+          process.exit(1);
+      });
 };
 
 module.exports.listTables = listTables;
 module.exports.getTableInfo = getTableInfo;
 module.exports.gracefulShutdown = gracefulShutdown;
+module.exports.client = client;;
+module.exports.systemClient = systemClient;

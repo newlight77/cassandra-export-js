@@ -3,25 +3,11 @@
 
 const fs = require('fs');
 const jsonStream = require('JSONStream');
-const cassandra = require('cassandra-driver');
 const color = require('chalk');
 
+const client = require('./cassandra-service').client;
 const util = require('./util');
 let config = require('./config');
-
-let authProvider;
-
-if (config.user && config.password) {
-    authProvider = new cassandra.auth.PlainTextAuthProvider(config.user, config.password);
-}
-
-let client = new cassandra.Client({
-  contactPoints: [config.host],
-  keyspace: config.keyspace,
-  authProvider: authProvider,
-  protocolOptions: {port: [config.port]}
-});
-
 
 function buildQuery (tableInfo, keys) {
   let values = ',?'.repeat(keys.length-1);
@@ -100,16 +86,4 @@ let importSingleTable = function (table, tableInfo) {
       });
 }
 
-let gracefulShutdown = function() {
-  client.shutdown()
-      .then(function (){
-          process.exit();
-      })
-      .catch(function (err){
-          console.log(`error : ${color.red(err)}`);
-          process.exit(1);
-      });
-}
-
 module.exports.importSingleTable = importSingleTable;
-module.exports.gracefulShutdown = gracefulShutdown;
