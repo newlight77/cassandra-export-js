@@ -10,7 +10,7 @@ if (process.env.HOST) {
 }
 
 if (process.env.PORT) {
-  config.host = process.env.PORT;
+  config.port = process.env.PORT;
 }
 
 if (process.env.USER) {

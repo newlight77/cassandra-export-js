@@ -6,15 +6,15 @@
   "password" : "",
   "tables" : [
     {
-      "name" : "temp",
-      "maxSize" : "1000"
+      "name" : "table1",
+      "maxSize" : "1"
     },
     {
-      "name" : "lock"
+      "name" : "table2"
     },
     {
-      "name" : "cron",
-      "maxSize" : "1000",
+      "name" : "table3",
+      "maxSize" : "1",
       "exclude" : true
     }
   ],

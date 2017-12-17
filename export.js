@@ -1,6 +1,7 @@
 const cluster = require('cluster');
 const http = require('http');
 const numCPUs = require('os').cpus().length;
+const color = require('chalk');
 
 const cassandraService = require('./src/cassandra-service');
 const exportService = require('./src/export-service');
@@ -10,19 +11,19 @@ let config = require('./src/config');
 function messageHandler(table) {
   exportService.exportSingleTable(table)
   .then(function resolve() {
-    console.log('success exporting table :', table);
+    console.log(`Success exporting table : ${color.yellow(table)}`);
     process.send('done');
   }, function error() {
-    console.log('Error exporting table :', table);
+    console.log(`${color.yellow('Error exporting table : ')}${color.yellow(table)}`);
   });
 }
 
 if (cluster.isMaster) {
-  console.log(`Master ${process.pid} is running`);
+  console.log(`Master ${color.blue(process.pid)} is running`);
 
   setInterval(() => {
     let nbAlives = util.alives(cluster);
-    console.log('nbAlives=', nbAlives);
+    console.log(`nbAlives : ${color.blue(nbAlives)}`);
     if (nbAlives == 0) {
       process.exit();
     }
@@ -72,7 +73,7 @@ if (cluster.isMaster) {
   console.log(`Worker ${process.pid} started`);
 
   process.on('message', (table) => {
-    console.log(`Worker ${process.pid} received table :`, table);
+    console.log(`Worker ${color.blue(process.pid)} received table : ${color.yellow(table)}`);
     messageHandler(table);
   });
 

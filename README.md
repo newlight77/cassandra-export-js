@@ -1,6 +1,9 @@
 # db-exportjs
 Data export from cassandra to json files and import from json files to cassandra.
 
+## Requirements
+
+* Nodejs 8.9+ + npm 5.5+
 
 ## Usage
 
@@ -23,14 +26,14 @@ Sample:
   "password" : "",
   "tables" : [
     {
-      "name" : "temp",
+      "name" : "table1",
       "maxSize" : "1000"
     },
     {
-      "name" : "lock"
+      "name" : "table2"
     },
     {
-      "name" : "cron",
+      "name" : "table3",
       "maxSize" : "1000",
       "exclude" : true
     }
@@ -75,6 +78,24 @@ node import.js
 ```
 
 This will import from json files under dataDir;
+
+
+## Contributors
+
+Please feel free to contribute.
+
+### Additional Requirements
+
+* Docker + Docker-compose installed
+
+To run tests :
+```
+./test/runTest.sh
+```
+
+This will use docker-compose to launch 2 instances of cassandra.
+
+The test script will inject schema.cql to create a keyspace and tables. Basically this script exports data from one database into json files and and import them into another database.
 
 ## Licence
 

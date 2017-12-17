@@ -1,6 +1,7 @@
 const cluster = require('cluster');
 const http = require('http');
 const numCPUs = require('os').cpus().length;
+const color = require('chalk');
 
 const cassandraService = require('./src/cassandra-service');
 const importService = require('./src/import-service');
@@ -11,19 +12,19 @@ let config = require('./src/config');
 function messageHandler(table, tableInfo) {
   importService.importSingleTable(table, tableInfo)
   .then(function resolve() {
-    console.log('success importing table :', table);
+    console.log(`Success importing table : ${color.yellow(table)}`);
     process.send('done');
   }, function error() {
-    console.log('Error importing table :', table);
+    console.log(`${color.yellow('Error importing table : ')}${color.yellow(table)}`);
   });
 }
 
 if (cluster.isMaster) {
-  console.log(`Master ${process.pid} is running`);
+  console.log(`Master ${color.blue(process.pid)} is running`);
 
   setInterval(() => {
     let nbAlives = util.alives(cluster);
-    console.log('nbAlives=', nbAlives);
+    console.log(`nbAlives : ${color.blue(nbAlives)}`);
     if (nbAlives == 0) {
       process.exit();
     }
@@ -77,7 +78,7 @@ if (cluster.isMaster) {
 } else {
   console.log(`Worker ${process.pid} started`);
   process.on('message', (message) => {
-    console.log(`Worker ${process.pid} received table :`, message.table);
+    console.log(`Worker ${color.blue(process.pid)} received table : ${color.yellow(message.table)}`);
     messageHandler(message.table, message.tableInfo);
   });
 

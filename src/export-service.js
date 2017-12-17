@@ -29,7 +29,7 @@ let client = new cassandra.Client({
 function createJsonFile (table) {
   let jsonFile = fs.createWriteStream(config.dataDir + '/' + table + '.json');
   jsonFile.on('error', function (err) {
-      console.log('err ' + err);
+      console.log(`error : ${color.red(err)}`);
       reject(err);
   });
   return jsonFile;
@@ -37,7 +37,7 @@ function createJsonFile (table) {
 
 let exportSingleTable = function (table) {
       return new Promise(function(resolve, reject) {
-          console.log('exportSingleTable : ', table);
+          console.log(`exportSingleTable ${color.yellow(table)}`);
 
           let processed = 0;
           let startTime = Date.now();
@@ -63,12 +63,12 @@ let exportSingleTable = function (table) {
                 processed++;
               } else {
                 util.metrics(table, startTime, processed);
-                throw `${color.red("reached max")}`;
+                throw `${color.red("MaxSize reached! please set a higher maxSize in ")} ${color.yellow("config.json")}`;
               }
             }
           })
           .on('end', function () {
-            console.log('Ending writes to : ' + table + '.json');
+            console.log(`Ending writes to : ${color.yellow(table + '.json')}`);
             util.metrics(table, startTime, processed);
             writeStream.end();
             resolve();
@@ -85,7 +85,7 @@ const gracefulShutdown = function() {
           process.exit();
       })
       .catch(function (err){
-          console.log(err);
+          console.log(`error : ${color.red(err)}`);
           process.exit(1);
       });
 }
